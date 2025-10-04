@@ -22,7 +22,7 @@ jobs:
       - name: Install Mise and Dependencies
         uses: jdx/mise-action@v2
         with:
-          version: latest # or specify pin, e.g. "2024.12.14"
+          version: 2025.10.2 # or specify pin, e.g. "2024.12.14"
           install: true   # Installs tools defined in .mise.toml or .tool-versions
           cache: true     # Caches virtualenvs created by mise       
 
