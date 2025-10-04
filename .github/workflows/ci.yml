@@ -1,0 +1,38 @@
+name: CI build workflow with MISE-EN-PLACE
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13.7'
+
+      - name: Install Mise and Dependencies
+        uses: jdx/mise-action@v2
+        with:
+          version: latest # or specify pin, e.g. "2024.12.14"
+          install: true   # Installs tools defined in .mise.toml or .tool-versions
+          cache: true     # Caches virtualenvs created by mise       
+
+      - name: Trust mise configuration
+        run: |
+          chmod +x scripts/trust-mise.sh || true
+          bash scripts/trust-mise.sh
+        # don't fail the job if the script cannot obtain a public IP or similar; script exits non-zero only on serious errors
+        continue-on-error: false
+
+      - name: Run build via Mise
+        run: |
+          mise run build

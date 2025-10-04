@@ -59,9 +59,6 @@ Pipfile.lock
 # logs
 *.log
 
-# GitHub Actions
-.github/workflows/
-
 # local config
 .env
 
