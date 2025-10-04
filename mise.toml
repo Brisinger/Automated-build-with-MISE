@@ -34,8 +34,12 @@ run = "pytest --cov=utilities --cov-report=xml:tests/coverage/coverage.xml --cov
 depends = ["install", "lint"]
 
 [tasks.lint]
-description = "Lint the code"
-run = "pylint utilities/"
+description = "Lint the code and validate CI YAML"
+run = '''
+pylint utilities/ || exit 1
+# Validate GitHub Actions workflow YAML (requires PyYAML)
+python -c "import sys, yaml, pathlib; p=pathlib.Path('.github/workflows/ci.yml'); data=p.read_text(); yaml.safe_load(data); print('GitHub Actions workflow YAML file sanity check OK.')"
+'''
 depends = ["install"]
 
 [tasks.info]

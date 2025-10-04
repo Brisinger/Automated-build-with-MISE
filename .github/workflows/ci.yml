@@ -36,3 +36,25 @@ jobs:
       - name: Run build via Mise
         run: |
           mise run build
+
+      - name: Upload coverage XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: tests/coverage/coverage.xml
+
+      - name: Upload coverage HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: tests/coverage/html
+
+      - name: Add artifacts links to run summary
+        if: always()
+        run: |
+          SUMMARY_FILE="$GITHUB_STEP_SUMMARY"
+          echo "## Build artifacts" >> "$SUMMARY_FILE"
+          echo "Artifacts for this run are available on the Actions artifacts page:" >> "$SUMMARY_FILE"
+          echo "- [Download artifacts](https://github.com/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts)" >> "$SUMMARY_FILE"
