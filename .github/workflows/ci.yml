@@ -63,7 +63,7 @@ jobs:
           echo "- Actor: ${GITHUB_ACTOR}" >> "$RUN_SUMMARY_FILE"
           echo "" >> "$RUN_SUMMARY_FILE"
           echo "## Artifacts" >> "$RUN_SUMMARY_FILE"
-          echo "- Actions artifacts page: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts" >> "$RUN_SUMMARY_FILE"
+          echo "- Actions artifacts page: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> "$RUN_SUMMARY_FILE"
           echo "" >> "$RUN_SUMMARY_FILE"
           if [ -f tests/coverage/coverage.xml ]; then
             echo "## Coverage reports" >> "$RUN_SUMMARY_FILE"
@@ -71,10 +71,9 @@ jobs:
             echo "- Coverage HTML directory: tests/coverage/html" >> "$RUN_SUMMARY_FILE"
           fi
           echo "" >> "$RUN_SUMMARY_FILE"
-
           # Append a small link to the GitHub run summary UI
           echo "## Build artifacts" >> "$GITHUB_STEP_SUMMARY"
-          echo "- [Download run summary](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [Download run summary](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload run summary artifact
         if: always()
