@@ -22,15 +22,14 @@ jobs:
       - name: Install Mise and Dependencies
         uses: jdx/mise-action@v2
         with:
-          version: 2025.10.2 # or specify pin, e.g. "2024.12.14"
-          install: true   # Installs tools defined in .mise.toml or .tool-versions
-          cache: true     # Caches virtualenvs created by mise       
+          version: 2025.10.2
+          install: true
+          cache: true
 
       - name: Trust mise configuration
         run: |
           chmod +x scripts/trust-mise.sh || true
           bash scripts/trust-mise.sh
-        # don't fail the job if the script cannot obtain a public IP or similar; script exits non-zero only on serious errors
         continue-on-error: false
 
       - name: Run build via Mise
@@ -51,10 +50,35 @@ jobs:
           name: coverage-html
           path: tests/coverage/html
 
-      - name: Add artifacts links to run summary
+      - name: Create run summary and append to UI summary
         if: always()
         run: |
-          SUMMARY_FILE="$GITHUB_STEP_SUMMARY"
-          echo "## Build artifacts" >> "$SUMMARY_FILE"
-          echo "Artifacts for this run are available on the Actions artifacts page:" >> "$SUMMARY_FILE"
-          echo "- [Download artifacts](https://github.com/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts)" >> "$SUMMARY_FILE"
+          RUN_SUMMARY_FILE="$GITHUB_WORKSPACE/run-summary.md"
+          echo "# Run summary for ${GITHUB_REPOSITORY}" > "$RUN_SUMMARY_FILE"
+          echo "" >> "$RUN_SUMMARY_FILE"
+          echo "- Run number: ${GITHUB_RUN_NUMBER}" >> "$RUN_SUMMARY_FILE"
+          echo "- Run ID: ${GITHUB_RUN_ID}" >> "$RUN_SUMMARY_FILE"
+          echo "- Trigger: ${GITHUB_EVENT_NAME}" >> "$RUN_SUMMARY_FILE"
+          echo "- Commit: ${GITHUB_SHA}" >> "$RUN_SUMMARY_FILE"
+          echo "- Actor: ${GITHUB_ACTOR}" >> "$RUN_SUMMARY_FILE"
+          echo "" >> "$RUN_SUMMARY_FILE"
+          echo "## Artifacts" >> "$RUN_SUMMARY_FILE"
+          echo "- Actions artifacts page: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts" >> "$RUN_SUMMARY_FILE"
+          echo "" >> "$RUN_SUMMARY_FILE"
+          if [ -f tests/coverage/coverage.xml ]; then
+            echo "## Coverage reports" >> "$RUN_SUMMARY_FILE"
+            echo "- Coverage XML: tests/coverage/coverage.xml" >> "$RUN_SUMMARY_FILE"
+            echo "- Coverage HTML directory: tests/coverage/html" >> "$RUN_SUMMARY_FILE"
+          fi
+          echo "" >> "$RUN_SUMMARY_FILE"
+
+          # Append a small link to the GitHub run summary UI
+          echo "## Build artifacts" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [Download run summary](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/suites/${GITHUB_RUN_ID}/artifacts)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload run summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-summary
+          path: run-summary.md
