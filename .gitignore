@@ -1,0 +1,74 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+download/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+coverage.xml
+htmlcov/
+tests/coverage/
+.coverage
+
+# Mypy
+.mypy_cache/
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# logs
+*.log
+
+# GitHub Actions
+.github/workflows/
+
+# local config
+.env
+
+# misc
+*.bak
+*.swp
+
+# MISE-EN-PLACE
+.mise_config
+.mise_trusted

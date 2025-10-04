@@ -1,0 +1,52 @@
+min_version = "2025.10.0"
+
+[env]
+# Use the project name derived from the current directory
+PROJECT_NAME = "{{ config_root | basename }}"
+
+# Make Python imports resolve to local project root directory's Virtual Environment
+PYTHONPATH = "{{ config_root }}"
+
+# Automatic virtualenv activation
+_.python.venv = { path = ".venv", create = true, python = "3.13.7" }
+
+[tools]
+python = "{{ get_env(name='PYTHON_VERSION', default='3.13.7') }}"
+
+[tasks.install]
+description = "Install dependencies"
+run = "pip install -r requirements.txt"
+
+[tasks.run]
+description = "Run the application"
+run = "python utilities/util.py"
+depends = ["test"]
+
+[tasks.test]
+description = "Run tests"
+run = "pytest tests/"
+depends = ["lint", "install"]
+
+[tasks.coverage]
+description = "Run tests with coverage and generate reports"
+# Use PYTHONPATH per env setting; outputs go to tests/coverage
+run = "pytest --cov=utilities --cov-report=xml:tests/coverage/coverage.xml --cov-report=html:tests/coverage/html tests/"
+depends = ["install", "lint"]
+
+[tasks.lint]
+description = "Lint the code"
+run = "pylint utilities/"
+depends = ["install"]
+
+[tasks.info]
+description = "Print project information"
+run = '''
+echo "Project: $PROJECT_NAME"
+echo "Virtual Environment: $VIRTUAL_ENV"
+'''
+depends = ["run"]
+
+[tasks.build]
+description = "Build the code"
+run = "echo 'Build workflow complete'"
+depends = ["install", "lint", "coverage", "test", "run", "info"]
